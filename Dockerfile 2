@@ -1,0 +1,21 @@
+# استخدم صورة Python خفيفة
+FROM python:3.11-slim
+
+# تعيين مجلد العمل
+WORKDIR /app
+
+# تثبيت التبعيات الضرورية للنظام (اختياري لضمان الاستقرار)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# نسخ ملف المتطلبات وتثبيتها
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir python-telegram-bot requests httpx
+
+# نسخ كود البوت
+COPY bot.py .
+
+# تشغيل البوت مع تفعيل الـ buffering لرؤية السجلات فوراً
+ENV PYTHONUNBUFFERED=1
+CMD ["python", "bot.py"]
